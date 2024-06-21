@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Менеджер паролей</title>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        h2 {
+            display: flex;
+            justify-content: center;
+        }
+
+        .main-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+        }
+
+        .form form {
+            width: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .form-hidden {
+            display: none;
+        }
+
+        .label {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .label span {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .input {
+            padding: 7px;
+            border-radius: 5px;
+            border: 1px solid #b6b6b6;
+        }
+
+        .input-error {
+            border: 2px solid #ff0000;
+        }
+
+        .input-error::placeholder {
+            color: #ff0000;
+        }
+
+        .button-save-container {
+            display: flex;
+            justify-content: center;
+        }
+
+        .button-save {
+            width: 200px;
+            margin: 0 auto;
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #000000;
+        }
+
+        .button-save:hover, .button-save:focus {
+            background-color: #f9ff4a;
+        }
+
+        ul {
+            margin: 0;
+            padding: 0;
+            list-style-type: none;
+        }
+
+        .button-add {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #000000;
+        }
+
+        .button-add:hover, .button-add:focus {
+            background-color: #f9ff4a;
+        }
+
+        .list-passwords {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .list-item {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #000000;
+        }
+
+        .button-delete {
+            background-color: transparent;
+            border: none;
+            padding: 0;
+            transition: all linear 0.2s;
+        }
+
+        .button-delete:hover {
+            transform: scale(1.5);
+            transition: all linear 0.2s;
+        }
+
+        .leb {
+            font-weight: 600;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <h1>Менеджер паролей</h1>
+        <div>
+            <h2>Сохранённые пароли:</h2>
+            <ul class="list-passwords"></ul>
+        </div>
+        <button class="button-add" id="btnAdd">Добавить новый пароль</button>
+
+        <div class="form form-hidden">
+            <form  action="">
+                <label class="label" for="login">
+                    <span>Логин:</span>
+                    <input class="input" id="login" name="login" placeholder="Введите логин">
+                </label>
+                <label class="label" for="password">
+                    <span>Пароль:</span>
+                    <input class="input" id="password" name="password" placeholder="Введите пароль">
+                </label>
+                <label class="label" for="url">
+                    <span>URL:</span>
+                    <input class="input" name="url" id="url" placeholder="Введите url">
+                </label>
+            </form>
+            <div class="button-save-container">
+                <button class="button-save">Сохранить</button>
+            </div>
+            
+        </div>
+        
+    </div>
+    <script>
+        let count = 0;
+        const btnAdd = document.querySelector('#btnAdd')
+        const form = document.querySelector('.form')
+
+        JSON.parse(localStorage.getItem('data')).forEach((item) => {
+                    
+            document.querySelector('.list-passwords').innerHTML += `<li class='list-item'>
+                    <div>
+                        <span class='leb'>Логин:</span>
+                        <span>${item.login}</span>
+                    </div>
+                    <div>
+                        <span class='leb'>Пароль:</span>
+                        <span>${item.password}</span>
+                    </div>
+                    <div>
+                        <span class='leb'>URL:</span>
+                        <span>${item.url}</span>
+                    </div>
+                    <button class='button-delete' onclick='deleteItem(${item.id})'>
+                        <svg width='20px' height='20px' viewBox="-47 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="m416.875 114.441406-11.304688-33.886718c-4.304687-12.90625-16.339843-21.578126-29.941406-21.578126h-95.011718v-30.933593c0-15.460938-12.570313-28.042969-28.027344-28.042969h-87.007813c-15.453125 0-28.027343 12.582031-28.027343 28.042969v30.933593h-95.007813c-13.605469 0-25.640625 8.671876-29.945313 21.578126l-11.304687 33.886718c-2.574219 7.714844-1.2695312 16.257813 3.484375 22.855469 4.753906 6.597656 12.445312 10.539063 20.578125 10.539063h11.816406l26.007813 321.605468c1.933594 23.863282 22.183594 42.558594 46.109375 42.558594h204.863281c23.921875 0 44.175781-18.695312 46.105469-42.5625l26.007812-321.601562h6.542969c8.132812 0 15.824219-3.941407 20.578125-10.535157 4.753906-6.597656 6.058594-15.144531 3.484375-22.859375zm-249.320312-84.441406h83.0625v28.976562h-83.0625zm162.804687 437.019531c-.679687 8.402344-7.796875 14.980469-16.203125 14.980469h-204.863281c-8.40625 0-15.523438-6.578125-16.203125-14.980469l-25.816406-319.183593h288.898437zm-298.566406-349.183593 9.269531-27.789063c.210938-.640625.808594-1.070313 1.484375-1.070313h333.082031c.675782 0 1.269532.429688 1.484375 1.070313l9.269531 27.789063zm0 0"></path><path d="m282.515625 465.957031c.265625.015625.527344.019531.792969.019531 7.925781 0 14.550781-6.210937 14.964844-14.21875l14.085937-270.398437c.429687-8.273437-5.929687-15.332031-14.199219-15.761719-8.292968-.441406-15.328125 5.925782-15.761718 14.199219l-14.082032 270.398437c-.429687 8.273438 5.925782 15.332032 14.199219 15.761719zm0 0"></path><path d="m120.566406 451.792969c.4375 7.996093 7.054688 14.183593 14.964844 14.183593.273438 0 .554688-.007812.832031-.023437 8.269531-.449219 14.609375-7.519531 14.160157-15.792969l-14.753907-270.398437c-.449219-8.273438-7.519531-14.613281-15.792969-14.160157-8.269531.449219-14.609374 7.519532-14.160156 15.792969zm0 0"></path><path d="m209.253906 465.976562c8.285156 0 15-6.714843 15-15v-270.398437c0-8.285156-6.714844-15-15-15s-15 6.714844-15 15v270.398437c0 8.285157 6.714844 15 15 15zm0 0"></path></svg>
+                    </button>
+                </li>`
+        })
+
+
+        btnAdd.addEventListener('click', () => {
+            form.classList.remove('form-hidden')
+        })
+
+        const btnSave = document.querySelector('.button-save')
+        
+
+        btnSave.addEventListener('click', () => {
+
+            if(document.querySelector('#login').value === "" || document.querySelector('#password').value === "" || document.querySelector('#url').value === ""){
+                document.querySelector('#login').classList.add('input-error')
+                document.querySelector('#password').classList.add('input-error')
+                document.querySelector('#url').classList.add('input-error')
+                document.querySelector('#login').placeholder = 'Поле не должно быть пустым'
+                document.querySelector('#password').placeholder = 'Поле не должно быть пустым'
+                document.querySelector('#url').placeholder = 'Поле не должно быть пустым'
+            }
+            else {
+                form.classList.add('form-hidden')
+
+                let newPassword = {id: count, login: document.querySelector('#login').value, password: document.querySelector('#password').value, url: document.querySelector('#url').value}
+                let data = JSON.parse(localStorage.getItem('data'))
+
+                data.push(newPassword);
+                localStorage.setItem('data', JSON.stringify(data))
+                count += 1;
+            }
+
+            document.querySelector('.list-passwords').innerHTML = ''
+            JSON.parse(localStorage.getItem('data')).forEach((item) => {
+                    
+                document.querySelector('.list-passwords').innerHTML += `<li class='list-item'>
+                        <div>
+                            <span class='leb'>Логин:</span>
+                            <span>${item.login}</span>
+                        </div>
+                        <div>
+                            <span class='leb'>Пароль:</span>
+                            <span>${item.password}</span>
+                        </div>
+                        <div>
+                            <span class='leb'>URL:</span>
+                            <span>${item.url}</span>
+                        </div>
+                        <button class='button-delete' onclick='deleteItem(${item.id})'>
+                            <svg width='20px' height='20px' viewBox="-47 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="m416.875 114.441406-11.304688-33.886718c-4.304687-12.90625-16.339843-21.578126-29.941406-21.578126h-95.011718v-30.933593c0-15.460938-12.570313-28.042969-28.027344-28.042969h-87.007813c-15.453125 0-28.027343 12.582031-28.027343 28.042969v30.933593h-95.007813c-13.605469 0-25.640625 8.671876-29.945313 21.578126l-11.304687 33.886718c-2.574219 7.714844-1.2695312 16.257813 3.484375 22.855469 4.753906 6.597656 12.445312 10.539063 20.578125 10.539063h11.816406l26.007813 321.605468c1.933594 23.863282 22.183594 42.558594 46.109375 42.558594h204.863281c23.921875 0 44.175781-18.695312 46.105469-42.5625l26.007812-321.601562h6.542969c8.132812 0 15.824219-3.941407 20.578125-10.535157 4.753906-6.597656 6.058594-15.144531 3.484375-22.859375zm-249.320312-84.441406h83.0625v28.976562h-83.0625zm162.804687 437.019531c-.679687 8.402344-7.796875 14.980469-16.203125 14.980469h-204.863281c-8.40625 0-15.523438-6.578125-16.203125-14.980469l-25.816406-319.183593h288.898437zm-298.566406-349.183593 9.269531-27.789063c.210938-.640625.808594-1.070313 1.484375-1.070313h333.082031c.675782 0 1.269532.429688 1.484375 1.070313l9.269531 27.789063zm0 0"></path><path d="m282.515625 465.957031c.265625.015625.527344.019531.792969.019531 7.925781 0 14.550781-6.210937 14.964844-14.21875l14.085937-270.398437c.429687-8.273437-5.929687-15.332031-14.199219-15.761719-8.292968-.441406-15.328125 5.925782-15.761718 14.199219l-14.082032 270.398437c-.429687 8.273438 5.925782 15.332032 14.199219 15.761719zm0 0"></path><path d="m120.566406 451.792969c.4375 7.996093 7.054688 14.183593 14.964844 14.183593.273438 0 .554688-.007812.832031-.023437 8.269531-.449219 14.609375-7.519531 14.160157-15.792969l-14.753907-270.398437c-.449219-8.273438-7.519531-14.613281-15.792969-14.160157-8.269531.449219-14.609374 7.519532-14.160156 15.792969zm0 0"></path><path d="m209.253906 465.976562c8.285156 0 15-6.714843 15-15v-270.398437c0-8.285156-6.714844-15-15-15s-15 6.714844-15 15v270.398437c0 8.285157 6.714844 15 15 15zm0 0"></path></svg>
+                        </button>
+                    </li>`
+                })
+            
+            
+        })
+
+        document.querySelector('#login').addEventListener('focus', () => {
+            document.querySelector('#login').classList.remove('input-error')
+            document.querySelector('#login').placeholder = 'Введите логин'
+        })
+
+        document.querySelector('#password').addEventListener('focus', () => {
+            document.querySelector('#password').classList.remove('input-error')
+            document.querySelector('#password').placeholder = 'Введите логин'
+        })
+
+        document.querySelector('#url').addEventListener('focus', () => {
+            document.querySelector('#url').classList.remove('input-error')
+            document.querySelector('#url').placeholder = 'Введите логин'
+        })
+
+        function deleteItem(itemID) {
+            let newPasswordsList = []
+            JSON.parse(localStorage.getItem('data')).forEach((item) => {
+                if(itemID !== item.id){
+                    newPasswordsList.push(item)
+                }
+            })
+
+            localStorage.setItem('data', JSON.stringify(newPasswordsList))
+
+            document.querySelector('.list-passwords').innerHTML = ''
+            newPasswordsList.forEach((item) => {
+                    
+                document.querySelector('.list-passwords').innerHTML += `<li class='list-item'>
+                        <div>
+                            <span class='leb'>Логин:</span>
+                            <span>${item.login}</span>
+                        </div>
+                        <div>
+                            <span class='leb'>Пароль:</span>
+                            <span>${item.password}</span>
+                        </div>
+                        <div>
+                            <span class='leb'>URL:</span>
+                            <span>${item.url}</span>
+                        </div>
+                        <button class='button-delete' onclick='deleteItem(${item.id})'>
+                            <svg width='20px' height='20px' viewBox="-47 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="m416.875 114.441406-11.304688-33.886718c-4.304687-12.90625-16.339843-21.578126-29.941406-21.578126h-95.011718v-30.933593c0-15.460938-12.570313-28.042969-28.027344-28.042969h-87.007813c-15.453125 0-28.027343 12.582031-28.027343 28.042969v30.933593h-95.007813c-13.605469 0-25.640625 8.671876-29.945313 21.578126l-11.304687 33.886718c-2.574219 7.714844-1.2695312 16.257813 3.484375 22.855469 4.753906 6.597656 12.445312 10.539063 20.578125 10.539063h11.816406l26.007813 321.605468c1.933594 23.863282 22.183594 42.558594 46.109375 42.558594h204.863281c23.921875 0 44.175781-18.695312 46.105469-42.5625l26.007812-321.601562h6.542969c8.132812 0 15.824219-3.941407 20.578125-10.535157 4.753906-6.597656 6.058594-15.144531 3.484375-22.859375zm-249.320312-84.441406h83.0625v28.976562h-83.0625zm162.804687 437.019531c-.679687 8.402344-7.796875 14.980469-16.203125 14.980469h-204.863281c-8.40625 0-15.523438-6.578125-16.203125-14.980469l-25.816406-319.183593h288.898437zm-298.566406-349.183593 9.269531-27.789063c.210938-.640625.808594-1.070313 1.484375-1.070313h333.082031c.675782 0 1.269532.429688 1.484375 1.070313l9.269531 27.789063zm0 0"></path><path d="m282.515625 465.957031c.265625.015625.527344.019531.792969.019531 7.925781 0 14.550781-6.210937 14.964844-14.21875l14.085937-270.398437c.429687-8.273437-5.929687-15.332031-14.199219-15.761719-8.292968-.441406-15.328125 5.925782-15.761718 14.199219l-14.082032 270.398437c-.429687 8.273438 5.925782 15.332032 14.199219 15.761719zm0 0"></path><path d="m120.566406 451.792969c.4375 7.996093 7.054688 14.183593 14.964844 14.183593.273438 0 .554688-.007812.832031-.023437 8.269531-.449219 14.609375-7.519531 14.160157-15.792969l-14.753907-270.398437c-.449219-8.273438-7.519531-14.613281-15.792969-14.160157-8.269531.449219-14.609374 7.519532-14.160156 15.792969zm0 0"></path><path d="m209.253906 465.976562c8.285156 0 15-6.714843 15-15v-270.398437c0-8.285156-6.714844-15-15-15s-15 6.714844-15 15v270.398437c0 8.285157 6.714844 15 15 15zm0 0"></path></svg>
+                        </button>
+                    </li>`
+                })
+            
+        }
+    </script>
+</body>
+</html>
